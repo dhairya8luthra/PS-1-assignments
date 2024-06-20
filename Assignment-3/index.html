@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Management App</title>
+    <!-- Bootstrap CSS for styling -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <!-- Custom CSS for additional styling -->
+    <style>
+      .sortable-header {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2>Add Staff Details</h2>
+      <form id="staffForm">
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input type="text" class="form-control" id="name" required />
+        </div>
+        <div class="form-group">
+          <label for="position">Position:</label>
+          <input type="text" class="form-control" id="position" required />
+        </div>
+        <div class="form-group">
+          <label for="department">Department:</label>
+          <input type="text" class="form-control" id="department" required />
+        </div>
+        <div class="form-group">
+          <label for="salary">Salary:</label>
+          <input type="number" class="form-control" id="salary" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      <hr />
+      <h2>Staff Details</h2>
+      <table id="staffTable" class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th class="sortable-header" data-column="name">
+              Name <i class="fas fa-sort"></i>
+            </th>
+            <th class="sortable-header" data-column="position">
+              Position <i class="fas fa-sort"></i>
+            </th>
+            <th class="sortable-header" data-column="department">
+              Department <i class="fas fa-sort"></i>
+            </th>
+            <th class="sortable-header" data-column="salary">
+              Salary <i class="fas fa-sort"></i>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Staff details will be inserted here dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- jQuery and Bootstrap JS for functionality -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript for handling form submission and table sorting -->
+    <script>
+      $(document).ready(function () {
+        // Array to hold staff details
+        let staffDetails = [];
+
+        // Function to add staff details to table
+        function addStaffToTable(staff) {
+          $("#staffTable tbody").append(`
+                    <tr>
+                        <td>${staff.name}</td>
+                        <td>${staff.position}</td>
+                        <td>${staff.department}</td>
+                        <td>${staff.salary}</td>
+                    </tr>
+                `);
+        }
+
+        // Submit form handler
+        $("#staffForm").submit(function (event) {
+          event.preventDefault();
+          const name = $("#name").val();
+          const position = $("#position").val();
+          const department = $("#department").val();
+          const salary = $("#salary").val();
+
+          // Create staff object
+          const staff = {
+            name: name,
+            position: position,
+            department: department,
+            salary: salary,
+          };
+
+          // Add staff to array
+          staffDetails.push(staff);
+
+          // Add staff to table
+          addStaffToTable(staff);
+
+          // Clear form fields
+          $("#name").val("");
+          $("#position").val("");
+          $("#department").val("");
+          $("#salary").val("");
+        });
+
+        // Sorting functionality
+        $(".sortable-header").click(function () {
+          const column = $(this).data("column");
+          const order = $(this).hasClass("asc") ? "desc" : "asc";
+
+          // Toggle sorting classes
+          $(".sortable-header").removeClass("asc").removeClass("desc");
+          $(this).addClass(order);
+
+          // Sort table rows
+          staffDetails.sort((a, b) => {
+            const valA = a[column];
+            const valB = b[column];
+            if (order === "asc") {
+              return valA > valB ? 1 : -1;
+            } else {
+              return valA < valB ? 1 : -1;
+            }
+          });
+
+          // Re-render sorted table
+          $("#staffTable tbody").empty();
+          staffDetails.forEach((staff) => {
+            addStaffToTable(staff);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

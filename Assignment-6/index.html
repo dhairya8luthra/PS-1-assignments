@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Form</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      select,
+      input,
+      button {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Dynamic Form</h1>
+    <form id="dynamicForm">
+      <label for="infoType">Select Information Type:</label>
+      <select id="infoType">
+        <option value="">-- Select --</option>
+        <option value="personal">Personal Information</option>
+        <option value="contact">Contact Information</option>
+        <option value="billing">Billing Information</option>
+      </select>
+
+      <div id="formFields"></div>
+
+      <button type="submit" id="submitBtn" style="display: none;">
+        Submit
+      </button>
+    </form>
+
+    <script>
+      const infoType = document.getElementById("infoType");
+      const formFields = document.getElementById("formFields");
+      const submitBtn = document.getElementById("submitBtn");
+      const form = document.getElementById("dynamicForm");
+
+      const fieldSets = {
+        personal: [
+          { name: "name", label: "Name", type: "text" },
+          { name: "age", label: "Age", type: "number" },
+          { name: "gender", label: "Gender", type: "text" },
+        ],
+        contact: [
+          { name: "address", label: "Address", type: "text" },
+          { name: "phone", label: "Phone Number", type: "tel" },
+          { name: "email", label: "Email", type: "email" },
+        ],
+        billing: [
+          { name: "creditCard", label: "Credit Card Number", type: "text" },
+          { name: "expiryDate", label: "Expiry Date", type: "text" },
+          { name: "cvv", label: "CVV", type: "text" },
+        ],
+      };
+
+      function createField(field) {
+        const label = document.createElement("label");
+        label.setAttribute("for", field.name);
+        label.textContent = field.label;
+
+        const input = document.createElement("input");
+        input.setAttribute("type", field.type);
+        input.setAttribute("id", field.name);
+        input.setAttribute("name", field.name);
+
+        const wrapper = document.createElement("div");
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+
+        return wrapper;
+      }
+
+      function updateForm() {
+        formFields.innerHTML = "";
+        const selectedOption = infoType.value;
+
+        if (selectedOption && fieldSets[selectedOption]) {
+          fieldSets[selectedOption].forEach((field) => {
+            formFields.appendChild(createField(field));
+          });
+          submitBtn.style.display = "block";
+        } else {
+          submitBtn.style.display = "none";
+        }
+      }
+
+      infoType.addEventListener("change", updateForm);
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const formValues = Object.fromEntries(formData.entries());
+        console.log("Form submitted with values:", formValues);
+        // Here you can add code to send the form data to a server or perform other actions
+        alert("Form submitted successfully!");
+      });
+    </script>
+  </body>
+</html>
